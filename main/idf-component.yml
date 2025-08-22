@@ -3,7 +3,7 @@ dependencies:
   idf: ">=6.0.0"
 
   display_component:
-    git: https://github.com/Ohmies/esp32-display-component.git
+    git: https://github.com/mamSupat/Display.git
     path: display
 
   sensor_component:
