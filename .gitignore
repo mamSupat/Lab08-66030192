@@ -1,0 +1,9 @@
+/build
+/sdkconfig
+/esp-idf/
+.vscode/
+*.obj
+*.o
+*.bin
+*.elf
+*.map

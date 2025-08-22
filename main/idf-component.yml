@@ -1,0 +1,15 @@
+version: "0.1.0"
+dependencies:
+  idf: ">=6.0.0"
+
+  display_component:
+    git: https://github.com/Ohmies/esp32-display-component.git
+    path: display
+
+  sensor_component:
+    git: https://github.com/PhumAkrthum/sensor03.git
+    path: sensor
+
+  led_component:
+    git: https://github.com/Suwaphat04/Lab08-LED-Components.git
+    path: LED
