@@ -2,46 +2,60 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
-
-// Include the headers of your components
-// เพื่อให้สามารถเรียกใช้ฟังก์ชันจาก components ได้
 #include "sensor.h"
 #include "display.h"
 #include "led.h"
 
-// กำหนด TAG สำหรับการแสดง Log
-static const char* TAG = "MAIN_APP";
+static const char *TAG = "LAB7-3";
 
-void app_main(void) {
-    ESP_LOGI(TAG, "Starting application...");
-    
-    // Initialize the components
-    // เรียกใช้ฟังก์ชัน initialization ของแต่ละ component
+void app_main(void)
+{
+    ESP_LOGI(TAG, "🚀 Lab 7-3: Custom Components Demo (sensor + display + led) Started");
+    ESP_LOGI(TAG, "📦 Using components created with idf.py create-component");
+
+    // เริ่มต้น components
     sensor_init();
     display_init();
     led_init();
 
-    // Main application loop
-    // วนลูปการทำงานหลักของโปรแกรม
-    while (1) {
-        // Read data from the sensor
-        float temperature = sensor_read_temperature();
-        
-        // Prepare message to display
-        char message[50];
-        sprintf(message, "Temp: %.2f C", temperature);
-        
-        // Display message on screen
-        display_show_message(message);
+    int reading_count = 0;
 
-        // Control the LED based on the temperature
-        if (temperature > 30.0) {
-            led_turn_on();
-        } else {
-            led_turn_off();
+    while (1)
+    {
+        reading_count++;
+        ESP_LOGI(TAG, "📋 Reading #%d", reading_count);
+
+        display_clear();
+
+        // อ่านข้อมูลจาก sensor component
+        float temp = sensor_read_temperature();
+        float hum = sensor_read_humidity();
+
+        // คำนวณ Heat Index
+        float heat_index = temp + 0.5 * hum;
+        ESP_LOGI(TAG, "🔥 Heat Index: %.2f", heat_index);
+
+        // แสดงข้อมูลผ่าน display component
+        display_show_sensor_data(temp, hum, heat_index);
+
+        // แสดงสถานะ + ควบคุม LED ตามค่า Heat Index
+        if (heat_index < 80)
+        {
+            display_show_status("✅ Comfortable");
+            led_off();
+        }
+        else if (heat_index < 90)
+        {
+            display_show_status("⚠️  Caution");
+            led_toggle();   // กระพริบๆ แบบสุ่มตามรอบ loop
+        }
+        else
+        {
+            display_show_status("🚨 Warning");
+            led_on();       // เปิดไฟ LED ค้างเตือน
         }
 
-        // Wait for 5 seconds before repeating the loop
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        ESP_LOGI(TAG, "==========================================");
+        vTaskDelay(pdMS_TO_TICKS(6000));
     }
 }
